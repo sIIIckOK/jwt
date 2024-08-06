@@ -44,7 +44,7 @@ func CreateToken(header Header, payload any, secret []byte) (string, error) {
 	return string(data), nil
 }
 
-func DefHS356Header() Header {
+func DefHS256Header() Header {
 	return Header{
 		Type: "JWT",
 		Alg:  "HS256",
