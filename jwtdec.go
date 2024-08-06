@@ -47,7 +47,6 @@ func DecodeToken(strToken string) (Token, error) {
 }
 
 func (t Token) VerifySecret(secret []byte) (bool, error) {
-    //@TODO: Implement RS256
     if t.Header.Alg != "HS256" {
         err := fmt.Sprintf("Hashing of `%v` is not supported", t.Header.Alg)
         return false, errors.New(err)

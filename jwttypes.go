@@ -12,3 +12,9 @@ type Header struct {
 	Alg  string `json:"alg"`
 }
 
+func DefHS256Header() Header {
+	return Header{
+		Type: "JWT",
+		Alg:  "HS256",
+	}
+}

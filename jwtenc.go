@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
 func CreateToken(header Header, payload any, secret []byte) (string, error) {
@@ -28,7 +29,8 @@ func CreateToken(header Header, payload any, secret []byte) (string, error) {
     data = append(data, payloadData...)
 
     if header.Alg != "HS256" { 
-        return "", errors.New("Hashing of `%v` is not supported") 
+        err := fmt.Sprintf("Hashing of `%v` is not supported", header.Alg)
+        return "", errors.New(err) 
     }
 
     h := hmac.New(sha256.New, secret)
@@ -44,9 +46,35 @@ func CreateToken(header Header, payload any, secret []byte) (string, error) {
 	return string(data), nil
 }
 
-func DefHS256Header() Header {
-	return Header{
-		Type: "JWT",
-		Alg:  "HS256",
-	}
+func CreateTokenFromJSON(header Header, jsonPayload []byte, secret []byte) (string, error) {
+    var data []byte
+
+    headerData, err := json.Marshal(header)
+    if err != nil {
+        return "", err
+    }
+    headerData = []byte(base64.RawURLEncoding.EncodeToString(headerData))
+
+    payloadData := []byte(base64.RawURLEncoding.EncodeToString(payload))
+
+    data = append(data, headerData...)
+    data = append(data, '.')
+    data = append(data, payloadData...)
+
+    if header.Alg != "HS256" { 
+        err := fmt.Sprintf("Hashing of `%v` is not supported", header.Alg)
+        return "", errors.New(err) 
+    }
+
+    h := hmac.New(sha256.New, secret)
+    _, err = h.Write(data)
+    if err != nil {
+        return "", err
+    }
+    hashed := h.Sum(nil)
+
+    data = append(data, '.')
+    data = append(data, []byte(base64.RawURLEncoding.EncodeToString(hashed))...)
+
+	return string(data), nil
 }
