@@ -46,7 +46,7 @@ func CreateToken(header Header, payload any, secret []byte) (string, error) {
 	return string(data), nil
 }
 
-func CreateTokenFromJSON(header Header, jsonPayload []byte, secret []byte) (string, error) {
+func createtokenfromjson(header Header, jsonPayload []byte, secret []byte) (string, error) {
     var data []byte
 
     headerData, err := json.Marshal(header)
@@ -55,7 +55,7 @@ func CreateTokenFromJSON(header Header, jsonPayload []byte, secret []byte) (stri
     }
     headerData = []byte(base64.RawURLEncoding.EncodeToString(headerData))
 
-    payloadData := []byte(base64.RawURLEncoding.EncodeToString(payload))
+    payloadData := []byte(base64.RawURLEncoding.EncodeToString(jsonPayload))
 
     data = append(data, headerData...)
     data = append(data, '.')
